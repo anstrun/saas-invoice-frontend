@@ -1,6 +1,9 @@
 version: 1
 frontend:
   phases:
+    preBuild:
+      commands:
+        - npm install
     build:
       commands:
         - npm run build
@@ -8,3 +11,6 @@ frontend:
     baseDirectory: dist
     files:
       - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
