@@ -3,9 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - npm ci
     build:
       commands:
+        - env | grep -e VITE_ > .env
         - npm run build
   artifacts:
     baseDirectory: dist
