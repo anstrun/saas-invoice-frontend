@@ -20,7 +20,12 @@ import { useParentAuth } from "../../../hooks/useParentAuth";
 
 const TAX_RATE = 15;
 
-const todayISO = () => new Date().toISOString().split("T")[0];
+const todayISO = () => {
+  const now = new Date();
+  return new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  ).toISOString().split("T")[0];
+};
 
 const INITIAL_CLIENT: ClientData = {
   ruc: "",
