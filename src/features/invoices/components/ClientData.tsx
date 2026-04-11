@@ -42,7 +42,7 @@ const ClientDataPanel = ({ data, onChange, isReadonly, isSearching, showSaveButt
         </div>
 
         <div>
-          <Label className={`${ds.typography.formLabel} text-primary`}>Razon Social</Label>
+          <Label className={`${ds.typography.formLabel} text-primary`}>Razón Social</Label>
           <div className={`relative ${ds.spacing.form.labelGap}`}>
             <User className={`absolute left-3 top-1/2 -translate-y-1/2 ${ds.sizing.icon.md} text-muted-foreground/60`} />
             <Input
@@ -56,7 +56,7 @@ const ClientDataPanel = ({ data, onChange, isReadonly, isSearching, showSaveButt
         </div>
 
         <div>
-          <Label className={`${ds.typography.formLabel} text-primary`}>Correo Electronico</Label>
+          <Label className={`${ds.typography.formLabel} text-primary`}>Correo Electrónico</Label>
           <div className={`relative ${ds.spacing.form.labelGap}`}>
             <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 ${ds.sizing.icon.md} text-muted-foreground/60`} />
             <Input
@@ -71,7 +71,7 @@ const ClientDataPanel = ({ data, onChange, isReadonly, isSearching, showSaveButt
         </div>
 
         <div>
-          <Label className={`${ds.typography.formLabel} text-primary`}>Fecha de Emision</Label>
+          <Label className={`${ds.typography.formLabel} text-primary`}>Fecha de Emisión</Label>
           <div className={`relative ${ds.spacing.form.labelGap}`}>
             <Calendar className={`absolute left-3 top-1/2 -translate-y-1/2 ${ds.sizing.icon.md} text-muted-foreground/60`} />
             <Input
