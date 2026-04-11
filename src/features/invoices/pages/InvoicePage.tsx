@@ -121,7 +121,7 @@ const InvoicePage = () => {
 
   const addProduct = useCallback((product: Omit<Product, "id">) => {
     setProducts((prev) => [...prev, { ...product, id: crypto.randomUUID() }]);
-    toast.success("Producto agregado");
+    toast.success("Producto agregado", { duration: 800 })
   }, []);
 
   const removeProduct = useCallback((id: string) => {
