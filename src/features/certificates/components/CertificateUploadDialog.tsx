@@ -198,8 +198,8 @@ export default function CertificateUploadDialog({
 
           {file && (
             <div className={`${ds.radius.interactive} border bg-card p-3 overflow-hidden`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center justify-between min-w-0 gap-2">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   {fileStatus === "uploading" ? (
                     <Loader2 className={`${ds.sizing.icon.md} animate-spin text-blue-500 flex-shrink-0`} />
                   ) : fileStatus === "completed" ? (
@@ -208,7 +208,7 @@ export default function CertificateUploadDialog({
                     <File className={`${ds.sizing.icon.md} text-muted-foreground flex-shrink-0`} />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className={`${ds.typography.body} truncate`}>{file.name}</p>
+                    <p className={`${ds.typography.body} truncate max-w-full`}>{file.name}</p>
                     <p className={`${ds.typography.caption} text-muted-foreground`}>
                       {formatFileSize(file.size)}
                       {fileStatus === "uploading" && " - Subiendo..."}
