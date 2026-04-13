@@ -141,7 +141,7 @@ export default function CertificateUploadDialog({
   return (
     <Dialog open={open}>
       <DialogContent
-        className="w-[90vw] max-w-md overflow-hidden"
+        className="sm:max-w-md"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
