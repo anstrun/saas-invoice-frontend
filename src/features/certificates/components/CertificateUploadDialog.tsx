@@ -141,7 +141,7 @@ export default function CertificateUploadDialog({
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-md"
+        className="sm:max-w-md overflow-hidden"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -161,10 +161,10 @@ export default function CertificateUploadDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className={`${ds.spacing.section.stack}`}>
+        <div className={`${ds.spacing.section.stack} min-w-0 w-full`}>
           <div
             className={`
-              relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors w-full overflow-hidden
+             relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors max-w-full box-border
               ${isDragging ? "border-blue-500 bg-blue-50" : "border-border"}
             `}
             onDragOver={handleDragOver}
