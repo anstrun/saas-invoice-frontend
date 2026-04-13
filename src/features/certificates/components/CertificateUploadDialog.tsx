@@ -141,7 +141,7 @@ export default function CertificateUploadDialog({
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-md"
+        className="sm:max-w-md overflow-hidden"  
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -164,7 +164,7 @@ export default function CertificateUploadDialog({
         <div className={`${ds.spacing.section.stack}`}>
           <div
             className={`
-              relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors
+              relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors w-full overflow-hidden
               ${isDragging ? "border-blue-500 bg-blue-50" : "border-border"}
             `}
             onDragOver={handleDragOver}
@@ -197,7 +197,7 @@ export default function CertificateUploadDialog({
           </div>
 
           {file && (
-            <div className={`${ds.radius.interactive} border bg-card p-3`}>
+            <div className={`${ds.radius.interactive} border bg-card p-3 overflow-hidden`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   {fileStatus === "uploading" ? (
