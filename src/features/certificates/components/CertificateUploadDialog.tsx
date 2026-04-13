@@ -207,7 +207,7 @@ export default function CertificateUploadDialog({
                   ) : (
                     <File className={`${ds.sizing.icon.md} text-muted-foreground flex-shrink-0`} />
                   )}
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className={`${ds.typography.body} truncate`}>{file.name}</p>
                     <p className={`${ds.typography.caption} text-muted-foreground`}>
                       {formatFileSize(file.size)}
