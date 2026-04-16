@@ -88,6 +88,9 @@ const InvoicePage = () => {
       setCustomerId(null);
       return;
     }
+  useEffect(() => {
+    setSearchTerm("9999999999");
+    }, []);
 
     if (customerData.data?.success && customerData.data.data) {
       setClientData((prev) => ({
