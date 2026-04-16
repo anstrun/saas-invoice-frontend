@@ -17,7 +17,7 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
   const infoFactura: InvoiceInfo = {
     tipoIdentificacionComprador: tipoIdentificacion,
     razonSocialComprador: clientData.razonSocial || "CONSUMIDOR FINAL",
-    identificacionComprador: clientData.ruc || "9999999999",
+    identificacionComprador: clientData.ruc || "9999999999999",
     totalSinImpuestos: subtotal,
     totalDescuento: 0,
     importeTotal: total,
@@ -54,7 +54,7 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
 }
 
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
-  if (!identificacion || identificacion === "9999999999") return "07";
+  if (!identificacion || identificacion === "9999999999999") return "07";
   if (identificacion.length === 13) return "04";
   return "05";
 }
