@@ -76,7 +76,7 @@ const InvoicePage = () => {
       setCustomerId(null);
       setIsNewCustomer(false);
       if (ruc.length === 0) {
-        setClientData(prev => ({ ...prev, razonSocial: "CONSUMIDOR FINAL", email: "" }));
+        setClientData(prev => ({ ...prev, razonSocial: "-", email: "" }));
         // Volver a cargar consumidor final
         setTimeout(() => setSearchTerm("9999999999"), 100);
       }
