@@ -24,7 +24,6 @@ const TAX_OPTIONS = [
   { label: 'IVA 12%', value: 12 },
   { label: 'IVA 15%', value: 15 },
 ]
-const [taxRate, setTaxRate] = useState(15)
 
 const todayISO = () => {
   const now = new Date();
