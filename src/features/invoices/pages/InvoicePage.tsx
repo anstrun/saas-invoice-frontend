@@ -34,7 +34,7 @@ const todayISO = () => {
 
 const INITIAL_CLIENT: ClientData = {
   ruc: "",
-  razonSocial: "",
+  razonSocial: "CONSUMIDOR FINAL",
   email: "",
   fechaEmision: todayISO(),
 };
@@ -66,17 +66,20 @@ const InvoicePage = () => {
   const total    = Math.round((subtotal + iva) * 100) / 100;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (clientData.ruc.length >= 10) {
-        setSearchTerm(clientData.ruc);
-      } else {
-        setSearchTerm(null);
-        setCustomerId(null);
-        setIsNewCustomer(false);
+    const ruc = clientData.ruc.trim();
+    // Solo buscar si es cédula (10) o RUC (13)
+    if (ruc.length === 10 || ruc.length === 13) {
+      const timer = setTimeout(() => setSearchTerm(ruc), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchTerm(null);
+      setCustomerId(null);
+      setIsNewCustomer(false);
+      // Si borraron el RUC, volver a consumidor final
+      if (ruc.length === 0) {
+        setClientData(prev => ({ ...prev, razonSocial: "CONSUMIDOR FINAL", email: "" }));
       }
-    }, 500);
-
-    return () => clearTimeout(timer);
+    }
   }, [clientData.ruc]);
 
   useEffect(() => {
@@ -253,14 +256,14 @@ const InvoicePage = () => {
               <p className={`${ds.typography.body} text-amber-700`}>
                 <span className="mr-1.5">&#x1F4A1;</span>
                 {clientData.ruc.length === 0
-                  ? "Ingresa el RUC o cedula del cliente"
-                  : clientData.ruc.length < 10
-                  ? `Ingresando... (${clientData.ruc.length}/10)`
+                  ? "Facturando a Consumidor Final — ingresa RUC o cédula para identificar al cliente"
+                  : clientData.ruc.length !== 10 && clientData.ruc.length !== 13
+                  ? `Identificación inválida — debe tener 10 (cédula) o 13 dígitos (RUC), tienes ${clientData.ruc.length}`
                   : isSearching
                   ? "Buscando cliente..."
                   : isNewCustomer
                   ? "Cliente no encontrado. Completa los datos y guarda."
-                  : "Cliente encontrado"}
+                  : "Cliente encontrado ✓"}
               </p>
             </div>
           </div>
