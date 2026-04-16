@@ -78,7 +78,7 @@ const InvoicePage = () => {
       if (ruc.length === 0) {
         setClientData(prev => ({ ...prev, razonSocial: "Consumidor Final", email: "" }));
         // Volver a cargar consumidor final
-        setTimeout(() => setSearchTerm("9999999999"), 100);
+        setTimeout(() => setSearchTerm("9999999999999"), 100);
       }
     }
   }, [clientData.ruc]);
