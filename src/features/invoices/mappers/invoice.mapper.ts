@@ -9,10 +9,9 @@ export function mapToInvoiceDto(
   taxRate: number,
   customerId: string
 ): FacturaRequest {
-  const subtotal = products.reduce((sum, p) => sum + p.quantity * p.price, 0);
-  const iva = subtotal * (taxRate / 100);
-  const total = subtotal + iva;
-
+const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
+const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
+const total    = Math.round((subtotal + iva) * 100) / 100;
   const tipoIdentificacion = mapTipoIdentificacion(clientData.ruc);
 
   const infoFactura: InvoiceInfo = {
@@ -32,8 +31,8 @@ export function mapToInvoiceDto(
   };
 
   const detalles: Detail[] = products.map((p): Detail => {
-    const lineTotal = p.quantity * p.price;
-    const lineTax = lineTotal * (taxRate / 100);
+    const lineTotal = Math.round(p.quantity * p.price * 100) / 100;
+    const lineTax   = Math.round(lineTotal * (taxRate / 100) * 100) / 100;
 
     return {
       codigoPrincipal: crypto.randomUUID().slice(0, 8).toUpperCase(),
