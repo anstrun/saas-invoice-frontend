@@ -213,7 +213,7 @@ const InvoicePage = () => {
     <div className="min-h-screen flex flex-col">
       <div className={`${ds.spacing.page.x} ${ds.spacing.page.y}`}>
         <div className="flex items-center justify-between">
-          <h1 className={`${ds.typography.pageTitle} text-foreground`}>Facturacion</h1>
+          <h1 className={`${ds.typography.pageTitle} text-foreground`}>Facturación</h1>
           <div className={`flex items-center ${ds.spacing.element.gap} ${ds.radius.badge} border border-green-200 bg-green-50 px-4 py-1.5 ${ds.typography.body} font-medium text-green-600`}>
             <Wifi className={ds.sizing.icon.md} />
             SRI Conectado
