@@ -44,6 +44,7 @@ const InvoicePage = () => {
   const [clientData, setClientData] = useState<ClientData>(INITIAL_CLIENT);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [taxRate, setTaxRate] = useState(15);
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [isNewCustomer, setIsNewCustomer] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
