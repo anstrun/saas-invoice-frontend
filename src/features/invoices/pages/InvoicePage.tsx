@@ -34,7 +34,7 @@ const todayISO = () => {
 
 const INITIAL_CLIENT: ClientData = {
   ruc: "",
-  razonSocial: "-",
+  razonSocial: "Consumidor Final",
   email: "",
   fechaEmision: todayISO(),
 };
@@ -76,7 +76,7 @@ const InvoicePage = () => {
       setCustomerId(null);
       setIsNewCustomer(false);
       if (ruc.length === 0) {
-        setClientData(prev => ({ ...prev, razonSocial: "-", email: "" }));
+        setClientData(prev => ({ ...prev, razonSocial: "Consumidor Final", email: "" }));
         // Volver a cargar consumidor final
         setTimeout(() => setSearchTerm("9999999999"), 100);
       }
