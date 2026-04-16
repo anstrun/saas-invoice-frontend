@@ -246,7 +246,7 @@ const InvoicePage = () => {
             <ClientDataPanel
               data={clientData}
               onChange={(data) => setClientData({ ...clientData, ...data })}
-               isReadonly={!isNewCustomer || clientData.ruc.length === 0} }
+               isReadonly={!isNewCustomer || clientData.ruc.length === 0} 
               showSaveButton={isNewCustomer}
               onSave={handleSaveCustomer}
               isSaving={createCustomer.isPending}
