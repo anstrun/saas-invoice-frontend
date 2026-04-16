@@ -55,9 +55,9 @@ const InvoicePage = () => {
   const createCustomer = useCreateCustomer();
   const showCertDialog = !isCertLoading && certStatus?.data?.hasActiveCertificate === false;
 
-  const subtotal = products.reduce((sum, p) => sum + p.quantity * p.price, 0);
-  const iva = subtotal * (TAX_RATE / 100);
-  const total = subtotal + iva;
+  const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
+  const iva      = Math.round(subtotal * (TAX_RATE / 100) * 100) / 100;
+  const total    = Math.round((subtotal + iva) * 100) / 100;
 
   useEffect(() => {
     const timer = setTimeout(() => {
