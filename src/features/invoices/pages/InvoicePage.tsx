@@ -67,17 +67,18 @@ const InvoicePage = () => {
 
   useEffect(() => {
     const ruc = clientData.ruc.trim();
-    // Solo buscar si es cédula (10) o RUC (13)
     if (ruc.length === 10 || ruc.length === 13) {
+      setCustomerId(null);  // ← limpiar antes de buscar
       const timer = setTimeout(() => setSearchTerm(ruc), 500);
       return () => clearTimeout(timer);
     } else {
       setSearchTerm(null);
       setCustomerId(null);
       setIsNewCustomer(false);
-      // Si borraron el RUC, volver a consumidor final
       if (ruc.length === 0) {
         setClientData(prev => ({ ...prev, razonSocial: "CONSUMIDOR FINAL", email: "" }));
+        // Volver a cargar consumidor final
+        setTimeout(() => setSearchTerm("9999999999"), 100);
       }
     }
   }, [clientData.ruc]);
@@ -88,10 +89,6 @@ const InvoicePage = () => {
       setCustomerId(null);
       return;
     }
-  useEffect(() => {
-    setSearchTerm("9999999999");
-    }, []);
-
     if (customerData.data?.success && customerData.data.data) {
       setClientData((prev) => ({
         ...prev,
