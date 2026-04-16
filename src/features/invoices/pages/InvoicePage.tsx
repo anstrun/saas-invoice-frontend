@@ -299,7 +299,7 @@ const InvoicePage = () => {
                 ${iva.toFixed(2)}
               </span>
             </div>
-
+           </div>
           <div className={`flex items-center ${ds.spacing.section.gap}`}>
             <div className={`flex items-center ${ds.spacing.element.gap}`}>
               <span className={`${ds.typography.body} text-muted-foreground`}>Total</span>
