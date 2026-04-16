@@ -33,7 +33,7 @@ const ClientDataPanel = ({ data, onChange, isReadonly, isSearching, showSaveButt
           <div className={`relative ${ds.spacing.form.labelGap}`}>
             <CreditCard className={`absolute left-3 top-1/2 -translate-y-1/2 ${ds.sizing.icon.md} text-muted-foreground/60`} />
             <Input
-              placeholder="Cédula (10) o RUC (13 dígitos) — vacío = Consumidor Final"
+              placeholder="Consumidor Final"
               value={data.ruc}
               onChange={(e) => {
                 // Solo permitir números
