@@ -18,7 +18,13 @@ import { queryClient } from "@/app/providers";
 import { ds } from "@/assets/designSystem";
 import { useParentAuth } from "../../../hooks/useParentAuth";
 
-const TAX_RATE = 15;
+const TAX_OPTIONS = [
+  { label: 'IVA 0%',  value: 0  },
+  { label: 'IVA 8%',  value: 8  },
+  { label: 'IVA 12%', value: 12 },
+  { label: 'IVA 15%', value: 15 },
+]
+const [taxRate, setTaxRate] = useState(15)
 
 const todayISO = () => {
   const now = new Date();
@@ -56,7 +62,7 @@ const InvoicePage = () => {
   const showCertDialog = !isCertLoading && certStatus?.data?.hasActiveCertificate === false;
 
   const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
-  const iva      = Math.round(subtotal * (TAX_RATE / 100) * 100) / 100;
+  const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
   const total    = Math.round((subtotal + iva) * 100) / 100;
 
   useEffect(() => {
@@ -139,7 +145,7 @@ const InvoicePage = () => {
 
     setIsLoading(true);
     try {
-      const dto = mapToInvoiceDto(clientData, products, TAX_RATE, customerId || "");
+      const dto = mapToInvoiceDto(clientData, products, taxRate, customerId || "");
       const result = await createInvoice(dto);
       const processed = processInvoiceResponse(result);
 
@@ -280,12 +286,19 @@ const InvoicePage = () => {
             </div>
             <div className="h-6 w-px bg-border" />
             <div className={`flex items-center ${ds.spacing.element.gap}`}>
-              <span className={`${ds.typography.body} text-muted-foreground`}>IVA ({TAX_RATE}%)</span>
+              <select
+                value={taxRate}
+                onChange={e => setTaxRate(Number(e.target.value))}
+                className="text-xs text-muted-foreground bg-transparent border border-border rounded-md px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30"
+              >
+                {TAX_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
               <span className={`${ds.typography.sectionHeading} text-foreground`}>
                 ${iva.toFixed(2)}
               </span>
             </div>
-          </div>
 
           <div className={`flex items-center ${ds.spacing.section.gap}`}>
             <div className={`flex items-center ${ds.spacing.element.gap}`}>
