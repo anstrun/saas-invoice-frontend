@@ -60,7 +60,7 @@ return {
     infoAdicional: nota.trim() ? { "Nota": nota.trim() } : undefined,
   };
 }
-}
+
 
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
   if (!identificacion || identificacion === "9999999999999") return "07";
