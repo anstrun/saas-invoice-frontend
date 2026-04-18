@@ -15,6 +15,8 @@ interface OrderSummaryProps {
   products: Product[];
   onAddProduct: (product: Omit<Product, "id">) => void;
   onRemoveProduct: (id: string) => void;
+  nota: string;
+  onNotaChange: (val: string) => void;
 }
 
 const createEmptyRow = (): EditingRow => ({
@@ -23,8 +25,7 @@ const createEmptyRow = (): EditingRow => ({
   qty: "",
   price: "",
 });
-
-const OrderSummary = ({ products, onAddProduct, onRemoveProduct }: OrderSummaryProps) => {
+const OrderSummary = ({ products, onAddProduct, onRemoveProduct, nota, onNotaChange }: OrderSummaryProps) => {
   const [editingRows, setEditingRows] = useState<EditingRow[]>([createEmptyRow()]);
   const lastRowRef = useRef<HTMLInputElement>(null);
 
@@ -170,6 +171,14 @@ const OrderSummary = ({ products, onAddProduct, onRemoveProduct }: OrderSummaryP
             );
           })}
         </div>
+
+        <textarea
+        value={nota}
+        onChange={e => onNotaChange(e.target.value)}
+        placeholder="Nota adicional (opcional)"
+        rows={2}
+        className="mt-3 w-full text-xs text-muted-foreground bg-transparent border border-border/30 rounded-lg focus:outline-none focus:border-border/60 resize-none placeholder:text-muted-foreground/40 px-3 py-2 transition-colors"
+      />
       </div>
     </div>
   );
