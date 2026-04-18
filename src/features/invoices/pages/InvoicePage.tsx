@@ -61,7 +61,7 @@ const InvoicePage = () => {
     description: string;
   }>({ show: false, variant: "default", title: "", description: "" });
   const [paymentMethod, setPaymentMethod] = useState('01');
-
+  const [nota, setNota] = useState("");
   const { data: certStatus, isLoading: isCertLoading } = useCertificateStatus();
   const _ = useParentAuth();
   const { data: branchData } = useCurrentBranch();
@@ -158,7 +158,7 @@ const InvoicePage = () => {
 
     setIsLoading(true);
     try {
-      const dto = mapToInvoiceDto(clientData, products, taxRate, customerId || "", paymentMethod);
+      const dto = mapToInvoiceDto(clientData, products, taxRate, customerId || "", paymentMethod, nota);
       const result = await createInvoice(dto);
       const processed = processInvoiceResponse(result);
 
