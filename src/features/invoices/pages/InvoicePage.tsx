@@ -290,6 +290,8 @@ const InvoicePage = () => {
               products={products}
               onAddProduct={addProduct}
               onRemoveProduct={removeProduct}
+              nota={nota}
+              onNotaChange={setNota}
             />
           </div>
         </div>
