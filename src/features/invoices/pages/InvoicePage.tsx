@@ -190,12 +190,11 @@ const InvoicePage = () => {
     }
   };
   const PAYMENT_OPTIONS = [
-  { value: '01', label: 'Efectivo' },
-  { value: '04', label: 'T. Crédito' },
-  { value: '05', label: 'T. Débito' },
-  { value: '06', label: 'Dinero electrónico' },
-  { value: '17', label: 'Transferencia' },
-  { value: '20', label: 'Otros' },
+  { codigo: "01", label: "Efectivo" },
+  { codigo: "19", label: "Tarjeta de crédito" },
+  { codigo: "16", label: "Tarjeta de débito" },
+  { codigo: "20", label: "Transferencia bancaria" },
+  { codigo: "17", label: "Dinero electrónico" },
 ]
 
   if (isCertLoading) {
