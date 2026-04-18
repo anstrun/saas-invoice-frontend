@@ -53,17 +53,20 @@ const InvoicePage = () => {
     title: string;
     description: string;
   }>({ show: false, variant: "default", title: "", description: "" });
+  const [paymentMethod, setPaymentMethod] = useState('01');
 
   const { data: certStatus, isLoading: isCertLoading } = useCertificateStatus();
   const _ = useParentAuth();
   const { data: branchData } = useCurrentBranch();
   const { data: customerData, isLoading: isSearching } = useCustomerByIdNumber(searchTerm || "");
+  
   const createCustomer = useCreateCustomer();
   const showCertDialog = !isCertLoading && certStatus?.data?.hasActiveCertificate === false;
 
   const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
   const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
   const total    = Math.round((subtotal + iva) * 100) / 100;
+  
 
   useEffect(() => {
     const ruc = clientData.ruc.trim();
@@ -148,7 +151,7 @@ const InvoicePage = () => {
 
     setIsLoading(true);
     try {
-      const dto = mapToInvoiceDto(clientData, products, taxRate, customerId || "");
+      const dto = mapToInvoiceDto(clientData, products, taxRate, customerId || "", paymentMethod);
       const result = await createInvoice(dto);
       const processed = processInvoiceResponse(result);
 
@@ -186,6 +189,14 @@ const InvoicePage = () => {
       setIsLoading(false);
     }
   };
+  const PAYMENT_OPTIONS = [
+  { value: '01', label: 'Efectivo' },
+  { value: '04', label: 'T. Crédito' },
+  { value: '05', label: 'T. Débito' },
+  { value: '06', label: 'Dinero electrónico' },
+  { value: '17', label: 'Transferencia' },
+  { value: '20', label: 'Otros' },
+]
 
   if (isCertLoading) {
     return (
@@ -301,6 +312,18 @@ const InvoicePage = () => {
               <span className={`${ds.typography.sectionHeading} text-foreground`}>
                 ${iva.toFixed(2)}
               </span>
+              <div className="h-6 w-px bg-border" />
+                <div className={`flex items-center ${ds.spacing.element.gap}`}>
+                  <select
+                    value={paymentMethod}
+                    onChange={e => setPaymentMethod(e.target.value)}
+                    className="text-xs text-muted-foreground bg-transparent border border-border rounded-md px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  >
+                    {PAYMENT_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
             </div>
            </div>
           <div className={`flex items-center ${ds.spacing.section.gap}`}>
