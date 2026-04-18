@@ -8,7 +8,8 @@ export function mapToInvoiceDto(
   products: Product[],
   taxRate: number,
   customerId: string,
-  paymentMethod: string = "01"
+  paymentMethod: string = "01",
+  nota: string = ""
 ): FacturaRequest {
 const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
 const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
@@ -51,7 +52,14 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
     };
   });
 
-  return { customerId, infoFactura, detalles };
+ return {
+  customerId,
+  infoFactura,
+  detalles,
+  infoAdicional: nota.trim() ? {
+    campoAdicional: [{ "@nombre": "Nota", "#": nota.trim() }]
+  } : undefined,
+};
 }
 
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
