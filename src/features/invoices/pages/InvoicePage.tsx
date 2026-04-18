@@ -302,7 +302,7 @@ const InvoicePage = () => {
               <select
                 value={taxRate}
                 onChange={e => setTaxRate(Number(e.target.value))}
-                className="text-xs text-muted-foreground bg-transparent border border-border rounded-md px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30"
+                className="text-xs font-medium text-foreground bg-background/60 border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
               >
                 {TAX_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -316,7 +316,7 @@ const InvoicePage = () => {
                   <select
                     value={paymentMethod}
                     onChange={e => setPaymentMethod(e.target.value)}
-                    className="text-xs text-muted-foreground bg-transparent border border-border rounded-md px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30"
+                    className="text-xs font-medium text-foreground bg-background/60 border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
                   >
                     {PAYMENT_OPTIONS.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
