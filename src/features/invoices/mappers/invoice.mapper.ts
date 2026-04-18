@@ -52,14 +52,14 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
     };
   });
 
- return {
-  customerId,
-  infoFactura,
-  detalles,
-  infoAdicional: nota.trim() ? {
-    campoAdicional: [{ "@nombre": "Nota", "#": nota.trim() }]
-  } : undefined,
-};
+
+return {
+    customerId,
+    infoFactura,
+    detalles,
+    infoAdicional: nota.trim() ? { "Nota": nota.trim() } : undefined,
+  };
+}
 }
 
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
