@@ -7,7 +7,8 @@ export function mapToInvoiceDto(
   clientData: ClientData,
   products: Product[],
   taxRate: number,
-  customerId: string
+  customerId: string,
+  paymentMethod: string = "01"
 ): FacturaRequest {
 const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
 const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
@@ -23,7 +24,7 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
     importeTotal: total,
     moneda: "USD",
     pagos: [{
-      medio: "01",
+      medio: paymentMethod,
       total: total,
       plazo: "0",
       unidadTiempo: "dias",
