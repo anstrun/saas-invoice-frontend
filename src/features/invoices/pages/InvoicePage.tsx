@@ -17,6 +17,13 @@ import { useCustomerByIdNumber, useCreateCustomer } from "@/features/customers";
 import { queryClient } from "@/app/providers";
 import { ds } from "@/assets/designSystem";
 import { useParentAuth } from "../../../hooks/useParentAuth";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select"
 
 const TAX_OPTIONS = [
   { label: 'IVA 0%',  value: 0  },
@@ -288,69 +295,70 @@ const InvoicePage = () => {
         </div>
       </div>
 
-      <div className={`fixed bottom-0 left-16 right-0 z-30 bg-card border-t border-border ${ds.shadows.stickyBar}`}>
-        <div className={`${ds.spacing.page.x} py-4 flex items-center justify-between ${ds.spacing.section.gap}`}>
-          <div className={`flex items-center ${ds.spacing.element.gapLg}`}>
-            <div className={`flex items-center ${ds.spacing.element.gap}`}>
-              <span className={`${ds.typography.body} text-muted-foreground`}>Subtotal</span>
-              <span className={`${ds.typography.sectionHeading} text-foreground`}>
-                ${subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="h-6 w-px bg-border" />
-            <div className={`flex items-center ${ds.spacing.element.gap}`}>
-              <select
-                value={taxRate}
-                onChange={e => setTaxRate(Number(e.target.value))}
-                className="text-xs font-medium text-foreground bg-background/60 border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
-              >
-                {TAX_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-              <span className={`${ds.typography.sectionHeading} text-foreground`}>
-                ${iva.toFixed(2)}
-              </span>
-              <div className="h-6 w-px bg-border" />
-                <div className={`flex items-center ${ds.spacing.element.gap}`}>
-                  <select
-                    value={paymentMethod}
-                    onChange={e => setPaymentMethod(e.target.value)}
-                    className="text-xs font-medium text-foreground bg-background/60 border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
-                  >
-                    {PAYMENT_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-            </div>
-           </div>
-          <div className={`flex items-center ${ds.spacing.section.gap}`}>
-            <div className={`flex items-center ${ds.spacing.element.gap}`}>
-              <span className={`${ds.typography.body} text-muted-foreground`}>Total</span>
-              <span className={`${ds.typography.price} text-primary`}>
-                ${total.toFixed(2)}
-              </span>
-            </div>
-            <Button
-              onClick={emitInvoice}
-              disabled={products.length === 0 || isLoading}
-              size="lg"
-              className={`px-8 ${ds.radius.button}`}
-            >
-              <Send className={`mr-2 ${ds.sizing.icon.md}`} />
-              {isLoading ? "Procesando..." : "Emitir Factura"}
-            </Button>
-          </div>
-        </div>
+<div className={`fixed bottom-0 left-16 right-0 z-30 bg-card border-t border-border ${ds.shadows.stickyBar}`}>
+  <div className={`${ds.spacing.page.x} py-4 flex items-center justify-between ${ds.spacing.section.gap}`}>
+    <div className={`flex items-center ${ds.spacing.element.gapLg}`}>
+      <div className={`flex items-center ${ds.spacing.element.gap}`}>
+        <span className={`${ds.typography.body} text-muted-foreground`}>Subtotal</span>
+        <span className={`${ds.typography.sectionHeading} text-foreground`}>
+          ${subtotal.toFixed(2)}
+        </span>
       </div>
-
-      <CertificateUploadDialog
-        open={showCertDialog}
-        onUploadSuccess={() => {}}
-      />
+      <div className="h-6 w-px bg-border" />
+      <div className={`flex items-center ${ds.spacing.element.gap}`}>
+        <Select value={String(taxRate)} onValueChange={v => setTaxRate(Number(v))}>
+          <SelectTrigger className="h-7 w-32 text-xs border-border/60 bg-transparent">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TAX_OPTIONS.map(opt => (
+              <SelectItem key={opt.value} value={String(opt.value)}>{opt.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span className={`${ds.typography.sectionHeading} text-foreground`}>
+          ${iva.toFixed(2)}
+        </span>
+      </div>
+      <div className="h-6 w-px bg-border" />
+      <div className={`flex items-center ${ds.spacing.element.gap}`}>
+        <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+          <SelectTrigger className="h-7 w-40 text-xs border-border/60 bg-transparent">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PAYMENT_OPTIONS.map(opt => (
+              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
-  );
-};
 
+    <div className={`flex items-center ${ds.spacing.section.gap}`}>
+      <div className={`flex items-center ${ds.spacing.element.gap}`}>
+        <span className={`${ds.typography.body} text-muted-foreground`}>Total</span>
+        <span className={`${ds.typography.price} text-primary`}>
+          ${total.toFixed(2)}
+        </span>
+      </div>
+      <Button
+        onClick={emitInvoice}
+        disabled={products.length === 0 || isLoading}
+        size="lg"
+        className={`px-8 ${ds.radius.button}`}
+      >
+        <Send className={`mr-2 ${ds.sizing.icon.md}`} />
+        {isLoading ? "Procesando..." : "Emitir Factura"}
+      </Button>
+    </div>
+  </div>
+</div>
+<CertificateUploadDialog
+  open={showCertDialog}
+  onUploadSuccess={() => {}}
+/>
+</div>
+);
+};
 export default InvoicePage;
