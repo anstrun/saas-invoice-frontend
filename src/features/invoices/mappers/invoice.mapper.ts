@@ -1,8 +1,6 @@
 import type { ClientData, Product } from "../types/invoice.types";
 import type { FacturaRequest, InvoiceInfo, Detail, Payment, TaxDetail } from "../types/invoice.types";
-
 const IVA_CODE = "2";
-
 export function mapToInvoiceDto(
   clientData: ClientData,
   products: Product[],
@@ -11,11 +9,10 @@ export function mapToInvoiceDto(
   paymentMethod: string = "01",
   nota: string = ""
 ): FacturaRequest {
-const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
-const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
-const total    = Math.round((subtotal + iva) * 100) / 100;
+  const subtotal = Math.round(products.reduce((sum, p) => sum + p.quantity * p.price, 0) * 100) / 100;
+  const iva      = Math.round(subtotal * (taxRate / 100) * 100) / 100;
+  const total    = Math.round((subtotal + iva) * 100) / 100;
   const tipoIdentificacion = mapTipoIdentificacion(clientData.ruc);
-
   const infoFactura: InvoiceInfo = {
     tipoIdentificacionComprador: tipoIdentificacion,
     razonSocialComprador: clientData.razonSocial || "CONSUMIDOR FINAL",
@@ -31,11 +28,9 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
       unidadTiempo: "dias",
     }],
   };
-
   const detalles: Detail[] = products.map((p): Detail => {
     const lineTotal = Math.round(p.quantity * p.price * 100) / 100;
     const lineTax   = Math.round(lineTotal * (taxRate / 100) * 100) / 100;
-
     return {
       codigoPrincipal: crypto.randomUUID().slice(0, 8).toUpperCase(),
       descripcion: p.name,
@@ -50,24 +45,19 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
         valor: lineTax,
       }],
     };
-
-
-
-return {
+  });
+  return {
     customerId,
     infoFactura,
     detalles,
     infoAdicional: nota.trim() ? { "Nota": nota.trim() } : undefined,
   };
 }
-
-
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
   if (!identificacion || identificacion === "9999999999999") return "07";
   if (identificacion.length === 13) return "04";
   return "05";
 }
-
 function mapTaxRateToCodigoPorcentaje(rate: number): string {
   const map: Record<number, string> = {
     0: "0",
