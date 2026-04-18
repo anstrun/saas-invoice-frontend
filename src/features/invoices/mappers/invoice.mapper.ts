@@ -50,7 +50,7 @@ const total    = Math.round((subtotal + iva) * 100) / 100;
         valor: lineTax,
       }],
     };
-  });
+
 
 
 return {
