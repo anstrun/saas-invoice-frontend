@@ -307,7 +307,7 @@ const InvoicePage = () => {
       <div className="h-6 w-px bg-border" />
       <div className={`flex items-center ${ds.spacing.element.gap}`}>
         <Select value={String(taxRate)} onValueChange={v => setTaxRate(Number(v))}>
-          <SelectTrigger className="h-7 w-32 text-xs text-muted-foreground border-border bg-transparent"
+          <SelectTrigger className="h-7 w-32 text-xs text-muted-foreground border-border bg-transparent">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -323,7 +323,7 @@ const InvoicePage = () => {
       <div className="h-6 w-px bg-border" />
       <div className={`flex items-center ${ds.spacing.element.gap}`}>
         <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-          <SelectTrigger className="h-7 w-32 text-xs text-muted-foreground border-border bg-transparent"
+          <SelectTrigger className="h-7 w-32 text-xs text-muted-foreground border-border bg-transparent">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
