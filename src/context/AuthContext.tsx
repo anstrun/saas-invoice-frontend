@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(event.data.token);
         setUser(event.data.user);
       }
+      // isReady solo va de false → true, nunca al revés
       setIsReady(true);
     }
 
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('_at');
       setToken(null);
       setUser(null);
-      setIsReady(false);
+      // NO reseteamos isReady — evita el loop infinito
       window.parent.postMessage({ type: 'LOGOUT_CONFIRMED' }, '*');
     }
   }, []);
