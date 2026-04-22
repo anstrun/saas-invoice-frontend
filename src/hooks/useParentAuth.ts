@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export interface ParentAuthData {
   token: string;
@@ -16,56 +16,92 @@ interface AuthMessage {
   type: 'AUTH_DATA' | 'AUTH_LOGOUT';
   token?: string;
   user?: ParentAuthData['user'];
+  requestId?: string;
 }
 
-const ALLOWED_ORIGIN = 'https://tu-dominio-padre.com'; // ⚠️ cámbialo en prod
+const ALLOWED_ORIGIN = 'https://tu-dominio-padre.com';
 
 export function useParentAuth() {
   const [authData, setAuthData] = useState<ParentAuthData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const requestTokenRefresh = useCallback(() => {
+  const currentRequestId = useRef<string | null>(null);
+  const isMounted = useRef(true);
+
+  const generateRequestId = () =>
+    `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const requestAuth = useCallback(() => {
+    const requestId = generateRequestId();
+    currentRequestId.current = requestId;
+
+    console.log('📤 Solicitando AUTH con requestId:', requestId);
+
     window.parent.postMessage(
-      { type: 'REQUEST_TOKEN_REFRESH' },
+      { type: 'REQUEST_AUTH', requestId },
+      ALLOWED_ORIGIN
+    );
+  }, []);
+
+  const requestTokenRefresh = useCallback(() => {
+    if (!currentRequestId.current) return;
+
+    window.parent.postMessage(
+      {
+        type: 'REQUEST_TOKEN_REFRESH',
+        requestId: currentRequestId.current,
+      },
       ALLOWED_ORIGIN
     );
   }, []);
 
   const handleMessage = useCallback((event: MessageEvent<AuthMessage>) => {
-    // 🔒 Validar origen
     if (event.origin !== ALLOWED_ORIGIN) return;
-
     if (!event.data || typeof event.data !== 'object') return;
 
-    console.log('📩 PostMessage recibido:', event.data);
+    const { type, token, user, requestId } = event.data;
 
-    if (event.data.type === 'AUTH_DATA') {
-      console.log('📩 AUTH_DATA recibido');
+    console.log('📩 Mensaje recibido:', event.data);
 
-      if (event.data.token && event.data.user) {
-        console.log('🔄 Nueva sesión recibida, limpiando anterior');
+    // 🔒 Ignorar respuestas que no corresponden a la request actual
+    if (type === 'AUTH_DATA') {
+      if (!requestId || requestId !== currentRequestId.current) {
+        console.warn('⛔ AUTH_DATA ignorado (requestId no coincide)');
+        return;
+      }
 
-        // 🧹 Limpiar sesión anterior
-        localStorage.removeItem('_at');
-        localStorage.removeItem('_rt');
+      if (token && user) {
+        console.log('✅ AUTH_DATA válido, actualizando sesión');
 
-        // 💾 Guardar nuevo token
-        localStorage.setItem('_at', event.data.token);
+        // Evitar re-render innecesario si es el mismo usuario
+        if (authData?.user?.id === user.id) {
+          console.log('ℹ️ Mismo usuario, no se actualiza');
+          setIsLoading(false);
+          return;
+        }
+
+        // 🧹 Limpiar completamente estado previo
+        localStorage.clear();
+
+        localStorage.setItem('_at', token);
+
+        if (!isMounted.current) return;
 
         setAuthData({
-          token: event.data.token,
-          user: event.data.user,
+          token,
+          user,
         });
       }
 
       setIsLoading(false);
     }
 
-    if (event.data.type === 'AUTH_LOGOUT') {
-      console.log('🚪 Logout recibido desde el padre');
+    if (type === 'AUTH_LOGOUT') {
+      console.log('🚪 Logout recibido');
 
-      localStorage.removeItem('_at');
-      localStorage.removeItem('_rt');
+      localStorage.clear();
+
+      if (!isMounted.current) return;
 
       setAuthData(null);
 
@@ -74,28 +110,31 @@ export function useParentAuth() {
         ALLOWED_ORIGIN
       );
     }
-  }, []);
+  }, [authData]);
 
   useEffect(() => {
+    isMounted.current = true;
+
     window.addEventListener('message', handleMessage);
 
-    // 🔑 SIEMPRE pedir token fresco
-    window.parent.postMessage(
-      { type: 'REQUEST_AUTH' },
-      ALLOWED_ORIGIN
-    );
+    // 🚨 SIEMPRE iniciar flujo limpio
+    localStorage.clear();
+    setAuthData(null);
+    setIsLoading(true);
 
-    // ⏳ fallback si el padre no responde
+    requestAuth();
+
     const timeout = setTimeout(() => {
       console.warn('⏳ Timeout esperando AUTH_DATA');
-      setIsLoading(false);
-    }, 3000);
+      if (isMounted.current) setIsLoading(false);
+    }, 4000);
 
     return () => {
+      isMounted.current = false;
       window.removeEventListener('message', handleMessage);
       clearTimeout(timeout);
     };
-  }, [handleMessage]);
+  }, [handleMessage, requestAuth]);
 
   return { authData, isLoading, requestTokenRefresh };
 }
