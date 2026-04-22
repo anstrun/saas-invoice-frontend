@@ -11,19 +11,19 @@ export interface AuthUser {
 
 interface AuthContextValue {
   token: string | null;
-  user: AuthUser | null;
+  user:  AuthUser | null;
   isReady: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue>({
-  token: null,
-  user: null,
+  token:   null,
+  user:    null,
   isReady: false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken]   = useState<string | null>(null);
-  const [user, setUser]     = useState<AuthUser | null>(null);
+  const [token,   setToken]   = useState<string | null>(null);
+  const [user,    setUser]    = useState<AuthUser | null>(null);
   const [isReady, setIsReady] = useState(false);
   const requested = useRef(false);
 
@@ -31,10 +31,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!event.data?.type) return;
 
     if (event.data.type === 'AUTH_DATA' && event.data.token && event.data.user) {
-      localStorage.removeItem('_at');
-      localStorage.setItem('_at', event.data.token);
-      setToken(event.data.token);
-      setUser(event.data.user);
+      const currentToken = localStorage.getItem('_at');
+      // Solo actualizar si el token cambió
+      if (currentToken !== event.data.token) {
+        localStorage.removeItem('_at');
+        localStorage.setItem('_at', event.data.token);
+        setToken(event.data.token);
+        setUser(event.data.user);
+      }
       setIsReady(true);
     }
 
@@ -55,8 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.parent.postMessage({ type: 'REQUEST_AUTH' }, '*');
     }
 
-    // Timeout 5s — si no llega token, mostrar UI igual
-    const t = setTimeout(() => setIsReady(true), 5000);
+    // Timeout 3s — si el padre no responde, mostrar UI igual
+    const t = setTimeout(() => setIsReady(true), 3000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
