@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 export interface ParentAuthData {
   token: string;
@@ -19,14 +20,12 @@ interface AuthMessage {
 }
 
 export function useParentAuth() {
-  const [authData, setAuthData] = useState<ParentAuthData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const authRequested = useRef(false);
-  const tokenReceived = useRef(false);
-
-  const requestTokenRefresh = useCallback(() => {
-    window.parent.postMessage({ type: 'REQUEST_TOKEN_REFRESH' }, '*');
-  }, []);
+  const { token, user, isReady } = useAuth();
+  return { 
+    authData: token && user ? { token, user } : null, 
+    isLoading: !isReady 
+  };
+}
 
   const handleMessage = useCallback((event: MessageEvent<AuthMessage>) => {
     if (!event.data?.type) return;
