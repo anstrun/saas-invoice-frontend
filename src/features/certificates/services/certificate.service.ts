@@ -7,11 +7,15 @@ import type {
 
 export const certificateService = {
   async upload(file: File, password: string): Promise<CertificateResponse> {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("password", password);
-    return apiClient.upload<CertificateResponse>("/certificates/upload", formData);
-  },
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("password", password);
+  const response = await apiClient.upload<CertificateResponse>("/certificates/upload", formData);
+  if (!response.success) {
+    throw new Error(response.error || "Error al subir el certificado");
+  }
+  return response;
+},
 
   async getStatus(): Promise<CertificateStatusResponse> {
     return apiClient.get<CertificateStatusResponse>("/certificates/status");
