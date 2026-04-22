@@ -11,8 +11,11 @@ export const certificateService = {
   formData.append("file", file);
   formData.append("password", password);
   const response = await apiClient.upload<CertificateResponse>("/certificates/upload", formData);
-  if (!response.success) {
-    throw new Error(response.error || "Error al subir el certificado");
+  
+  // El apiClient envuelve en { success, data } — revisar el data interno
+  const inner = (response as any).data ?? response;
+  if (!inner.success) {
+    throw new Error(inner.error || "Error al subir el certificado");
   }
   return response;
 },
