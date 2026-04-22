@@ -57,7 +57,7 @@ if (typeof window !== "undefined") {
       setAuthToken(event.data.token);
       tokenRefreshRequested = false;
       processQueue(true, event.data.token);
-      window.location.reload();
+      
     }
   });
 }
