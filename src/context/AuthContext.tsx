@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export interface AuthUser {
   id: string;
@@ -10,8 +10,8 @@ export interface AuthUser {
 }
 
 interface AuthContextValue {
-  token: string | null;
-  user:  AuthUser | null;
+  token:   string | null;
+  user:    AuthUser | null;
   isReady: boolean;
 }
 
@@ -25,14 +25,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token,   setToken]   = useState<string | null>(null);
   const [user,    setUser]    = useState<AuthUser | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const requested = useRef(false);
 
   const handleMessage = useCallback((event: MessageEvent) => {
     if (!event.data?.type) return;
 
     if (event.data.type === 'AUTH_DATA' && event.data.token && event.data.user) {
       const currentToken = localStorage.getItem('_at');
-      // Solo actualizar si el token cambió
       if (currentToken !== event.data.token) {
         localStorage.removeItem('_at');
         localStorage.setItem('_at', event.data.token);
@@ -51,22 +49,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Escuchar mensajes del padre
   useEffect(() => {
     window.addEventListener('message', handleMessage);
-
-    if (!requested.current) {
-      requested.current = true;
-      window.parent.postMessage({ type: 'REQUEST_AUTH' }, '*');
-    }
-
-    // Timeout 3s — si el padre no responde, mostrar UI igual
-    const t = setTimeout(() => setIsReady(true), 3000);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-      clearTimeout(t);
-    };
+    return () => window.removeEventListener('message', handleMessage);
   }, [handleMessage]);
+
+  // Solicitar auth UNA SOLA VEZ al montar
+  useEffect(() => {
+    window.parent.postMessage({ type: 'REQUEST_AUTH' }, '*');
+    const t = setTimeout(() => setIsReady(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, user, isReady }}>
