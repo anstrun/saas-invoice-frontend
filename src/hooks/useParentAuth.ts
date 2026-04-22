@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+
 export interface ParentAuthData {
   token: string;
   user: {
@@ -10,53 +11,75 @@ export interface ParentAuthData {
     branchId: string;
   };
 }
+
 interface AuthMessage {
   type: 'AUTH_DATA' | 'AUTH_LOGOUT';
   token?: string;
   user?: ParentAuthData['user'];
 }
-interface OutgoingMessage {
-  type: 'REQUEST_AUTH' | 'REQUEST_TOKEN_REFRESH' | 'LOGOUT_CONFIRMED';
-}
-const PARENT_ORIGIN = '*';
+
 export function useParentAuth() {
   const [authData, setAuthData] = useState<ParentAuthData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const authRequested = useRef(false);
+  const tokenReceived = useRef(false);
+
   const requestTokenRefresh = useCallback(() => {
-    window.parent.postMessage({ type: 'REQUEST_TOKEN_REFRESH' }, PARENT_ORIGIN);
+    window.parent.postMessage({ type: 'REQUEST_TOKEN_REFRESH' }, '*');
   }, []);
+
   const handleMessage = useCallback((event: MessageEvent<AuthMessage>) => {
-    console.log('📩 PostMessage recibido:', event.data);
-    if (event.data?.type === 'AUTH_DATA') {
-      console.log('📩 AUTH_DATA recibido');
+    if (!event.data?.type) return;
+
+    if (event.data.type === 'AUTH_DATA') {
       if (event.data.token && event.data.user) {
-        console.log('Token recibido via postMessage:', event.data.token);
-        console.log('💾 Guardando token en localStorage:', event.data.token);
+        // Limpiar sesión anterior
+        localStorage.removeItem('_at');
+        localStorage.removeItem('_rt');
+
+        // Guardar nueva sesión
         localStorage.setItem('_at', event.data.token);
+        tokenReceived.current = true;
+
         setAuthData({
           token: event.data.token,
-          user: event.data.user,
+          user:  event.data.user,
         });
       }
       setIsLoading(false);
-    } else if (event.data?.type === 'AUTH_LOGOUT') {
+
+    } else if (event.data.type === 'AUTH_LOGOUT') {
       localStorage.removeItem('_at');
       localStorage.removeItem('_rt');
+      tokenReceived.current = false;
       setAuthData(null);
+      setIsLoading(false);
       window.parent.postMessage({ type: 'LOGOUT_CONFIRMED' }, '*');
     }
   }, []);
+
   useEffect(() => {
     window.addEventListener('message', handleMessage);
-    const existingToken = localStorage.getItem('_at');
-    if (existingToken) {
-      setIsLoading(false);
-    } else {
+
+    // Siempre pedir token fresco al padre — nunca confiar en localStorage
+    if (!authRequested.current) {
+      authRequested.current = true;
       window.parent.postMessage({ type: 'REQUEST_AUTH' }, '*');
     }
+
+    // Timeout de seguridad — si el padre no responde en 4s, desbloquear UI
+    const timeout = setTimeout(() => {
+      if (!tokenReceived.current) {
+        console.warn('useParentAuth: timeout esperando token del padre');
+        setIsLoading(false);
+      }
+    }, 4000);
+
     return () => {
       window.removeEventListener('message', handleMessage);
+      clearTimeout(timeout);
     };
   }, [handleMessage]);
-  return { authData, isLoading };
+
+  return { authData, isLoading, requestTokenRefresh };
 }
