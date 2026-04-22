@@ -19,7 +19,7 @@ interface AuthMessage {
   requestId?: string;
 }
 
-const ALLOWED_ORIGIN = 'https://tu-dominio-padre.com';
+const ALLOWED_ORIGIN = 'https://main.d24ga17w1vxa5z.amplifyapp.com/';
 
 export function useParentAuth() {
   const [authData, setAuthData] = useState<ParentAuthData | null>(null);
