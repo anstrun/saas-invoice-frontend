@@ -18,56 +18,84 @@ interface AuthMessage {
   user?: ParentAuthData['user'];
 }
 
-interface OutgoingMessage {
-  type: 'REQUEST_AUTH' | 'REQUEST_TOKEN_REFRESH' | 'LOGOUT_CONFIRMED';
-}
-
-const PARENT_ORIGIN = '*';
+const ALLOWED_ORIGIN = 'https://tu-dominio-padre.com'; // ⚠️ cámbialo en prod
 
 export function useParentAuth() {
   const [authData, setAuthData] = useState<ParentAuthData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const requestTokenRefresh = useCallback(() => {
-    window.parent.postMessage({ type: 'REQUEST_TOKEN_REFRESH' }, PARENT_ORIGIN);
+    window.parent.postMessage(
+      { type: 'REQUEST_TOKEN_REFRESH' },
+      ALLOWED_ORIGIN
+    );
   }, []);
 
   const handleMessage = useCallback((event: MessageEvent<AuthMessage>) => {
+    // 🔒 Validar origen
+    if (event.origin !== ALLOWED_ORIGIN) return;
+
+    if (!event.data || typeof event.data !== 'object') return;
+
     console.log('📩 PostMessage recibido:', event.data);
-    if (event.data?.type === 'AUTH_DATA') {
+
+    if (event.data.type === 'AUTH_DATA') {
       console.log('📩 AUTH_DATA recibido');
+
       if (event.data.token && event.data.user) {
-        console.log('Token recibido via postMessage:', event.data.token);
-        console.log('💾 Guardando token en localStorage:', event.data.token);
+        console.log('🔄 Nueva sesión recibida, limpiando anterior');
+
+        // 🧹 Limpiar sesión anterior
+        localStorage.removeItem('_at');
+        localStorage.removeItem('_rt');
+
+        // 💾 Guardar nuevo token
         localStorage.setItem('_at', event.data.token);
+
         setAuthData({
           token: event.data.token,
           user: event.data.user,
         });
       }
+
       setIsLoading(false);
-    } else if (event.data?.type === 'AUTH_LOGOUT') {
+    }
+
+    if (event.data.type === 'AUTH_LOGOUT') {
+      console.log('🚪 Logout recibido desde el padre');
+
       localStorage.removeItem('_at');
       localStorage.removeItem('_rt');
+
       setAuthData(null);
-      window.parent.postMessage({ type: 'LOGOUT_CONFIRMED' }, '*');
+
+      window.parent.postMessage(
+        { type: 'LOGOUT_CONFIRMED' },
+        ALLOWED_ORIGIN
+      );
     }
   }, []);
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
 
-    const existingToken = localStorage.getItem('_at');
-    if (existingToken) {
+    // 🔑 SIEMPRE pedir token fresco
+    window.parent.postMessage(
+      { type: 'REQUEST_AUTH' },
+      ALLOWED_ORIGIN
+    );
+
+    // ⏳ fallback si el padre no responde
+    const timeout = setTimeout(() => {
+      console.warn('⏳ Timeout esperando AUTH_DATA');
       setIsLoading(false);
-    } else {
-      window.parent.postMessage({ type: 'REQUEST_AUTH' }, '*');
-    }
+    }, 3000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
+      clearTimeout(timeout);
     };
   }, [handleMessage]);
 
-  return { authData, isLoading };
+  return { authData, isLoading, requestTokenRefresh };
 }
