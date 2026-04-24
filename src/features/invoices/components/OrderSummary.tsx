@@ -80,7 +80,7 @@ const OrderSummary = ({ products, onAddProduct, onRemoveProduct, nota, onNotaCha
         { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       const data = await res.json();
-      const items: InventoryProduct[] = data.data?.data || data.data || [];
+      const items: InventoryProduct[] = data.data?.data || data.data?.items || data.data || [];
       setSuggestions(s => ({ ...s, [key]: items }));
       setShowDropdown(d => ({ ...d, [key]: items.length > 0 }));
     } catch {
