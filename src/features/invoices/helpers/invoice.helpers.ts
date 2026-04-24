@@ -11,6 +11,14 @@ export function processInvoiceResponse(response: FacturaResponse): InvoiceResult
 
   if (response.data) {
     console.log('Invoice SRI Messages:', response.data.messages);
+    
+      if (!response.data.success || response.data.sriStatus === "ERROR") {
+    return {
+      success: false,
+      accessKey: response.data.accessKey,
+      message: response.data.error || "Error al procesar la factura",
+    };
+  }
 
     if (response.data.sriStatus === "RECHAZADA") {
       return {
