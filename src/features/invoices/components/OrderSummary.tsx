@@ -82,17 +82,28 @@ const OrderSummary = ({ products, onAddProduct, onRemoveProduct, nota, onNotaCha
       const data = await res.json();
       console.log("RAW DATA:", JSON.stringify(data.data?.items?.[0]))
       const rawItems = data.data?.items || data.data?.data || [];
-      const items: InventoryProduct[] = rawItems.map((p: any) => ({
-        id:          p.id,
-        code:        p.code,
-        name:        p.name,
-        description: p.description,
-        price:       Number(p.price),
-        unit:        p.unit,
-        stock:       p.inventory
-          ? p.inventory.reduce((s: number, i: any) => s + Number(i.stock_quantity), 0)
-          : (p.stock ?? 0),
-      }));
+      // Obtener stock desde /inventory
+        const invRes = await fetch(
+          `${API_URL}/inventory`,
+          { headers: { Authorization: `Bearer ${getToken()}` } }
+        );
+        const invData = await invRes.json();
+        const invList: any[] = invData.data || [];
+        
+        const items: InventoryProduct[] = rawItems.map((p: any) => {
+          const stock = invList
+            .filter(i => i.product_id === p.id)
+            .reduce((s, i) => s + Number(i.stock_quantity || 0), 0);
+          return {
+            id:          p.id,
+            code:        p.code,
+            name:        p.name,
+            description: p.description,
+            price:       Number(p.price),
+            unit:        p.unit,
+            stock,
+          };
+        });
       setSuggestions(s => ({ ...s, [key]: items }));
       setShowDropdown(d => ({ ...d, [key]: items.length > 0 }));
     } catch {
