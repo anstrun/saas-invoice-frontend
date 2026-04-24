@@ -157,8 +157,7 @@ const InvoicePage = () => {
       const processed = processInvoiceResponse(result);
 
       if (processed.success) {
-  toast.success('¡Factura autorizada!', {
-    description: `Clave: ${processed.accessKey}`,
+  toast.success('¡Factura autorizada exitosamente!', {
     duration: 6000,
   })
   setProducts([])
