@@ -80,6 +80,7 @@ const OrderSummary = ({ products, onAddProduct, onRemoveProduct, nota, onNotaCha
         { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       const data = await res.json();
+      console.log("RAW DATA:", JSON.stringify(data.data?.items?.[0]))
       const rawItems = data.data?.items || data.data?.data || [];
       const items: InventoryProduct[] = rawItems.map((p: any) => ({
         id:          p.id,
