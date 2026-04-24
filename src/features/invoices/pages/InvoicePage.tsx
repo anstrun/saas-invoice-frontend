@@ -54,12 +54,6 @@ const InvoicePage = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [isNewCustomer, setIsNewCustomer] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
-  const [alertInfo, setAlertInfo] = useState<{
-    show: boolean;
-    variant: "default" | "destructive";
-    title: string;
-    description: string;
-  }>({ show: false, variant: "default", title: "", description: "" });
   const [paymentMethod, setPaymentMethod] = useState('01');
   const [nota, setNota] = useState("");
   const { data: certStatus, isLoading: isCertLoading } = useCertificateStatus();
@@ -163,38 +157,32 @@ const InvoicePage = () => {
       const processed = processInvoiceResponse(result);
 
       if (processed.success) {
-        setAlertInfo({
-          show: true,
-          variant: "default",
-          title: "Factura autorizada",
-          description: `Clave: ${processed.accessKey}`,
-        });
-        toast.success(processed.message);
-        setProducts([]);
-        setClientData({ ...INITIAL_CLIENT, fechaEmision: todayISO() });
-      } else {
-        const errorDescription = processed.details
-          ? processed.details.join("\n")
-          : processed.message;
-        setAlertInfo({
-          show: true,
-          variant: "destructive",
-          title: processed.message,
-          description: errorDescription,
-        });
-        toast.error(processed.message);
-      }
-    } catch (error) {
-      setAlertInfo({
-        show: true,
-        variant: "destructive",
-        title: "Error de conexion",
-        description: "No se pudo conectar con el servidor",
-      });
-      toast.error("Error de conexion con el servidor");
-    } finally {
-      setIsLoading(false);
-    }
+  toast.success('¡Factura autorizada!', {
+    description: `Clave: ${processed.accessKey}`,
+    duration: 6000,
+  })
+  setProducts([])
+  setClientData({ ...INITIAL_CLIENT, fechaEmision: todayISO() })
+} else {
+  // Separar errores por línea si hay múltiples
+  const messages = processed.message?.split('\n').filter(Boolean) || [processed.message]
+  messages.forEach(msg => {
+    toast.error(msg, {
+      duration: 5000,
+      role: 'alert',
+    })
+  })
+
+  // También mostrar details si existen
+  processed.details?.forEach(detail => {
+    toast.error(detail, { duration: 5000 })
+  })
+}
+   } catch (error) {
+  toast.error("Error de conexión con el servidor", { duration: 5000 });
+} finally {
+  setIsLoading(false);
+}
   };
   const PAYMENT_OPTIONS = [
   { value: '01', label: 'Efectivo' },
