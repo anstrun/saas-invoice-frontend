@@ -80,8 +80,18 @@ const OrderSummary = ({ products, onAddProduct, onRemoveProduct, nota, onNotaCha
         { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       const data = await res.json();
-      console.log("PRODUCTOS API:", JSON.stringify(data));
-      const items: InventoryProduct[] = data.data?.data || data.data?.items || data.data || [];
+      const rawItems = data.data?.items || data.data?.data || [];
+      const items: InventoryProduct[] = rawItems.map((p: any) => ({
+        id:          p.id,
+        code:        p.code,
+        name:        p.name,
+        description: p.description,
+        price:       Number(p.price),
+        unit:        p.unit,
+        stock:       p.inventory
+          ? p.inventory.reduce((s: number, i: any) => s + Number(i.stock_quantity), 0)
+          : (p.stock ?? 0),
+      }));
       setSuggestions(s => ({ ...s, [key]: items }));
       setShowDropdown(d => ({ ...d, [key]: items.length > 0 }));
     } catch {
