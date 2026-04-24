@@ -227,17 +227,6 @@ const InvoicePage = () => {
       </div>
 
       <div className={`flex-1 ${ds.spacing.page.x} ${ds.spacing.page.bottom}`}>
-        {alertInfo.show && (
-          <Alert variant={alertInfo.variant} className={`${ds.spacing.form.headingMargin}`}>
-            {alertInfo.variant === "default" ? (
-              <CheckCircle className={ds.sizing.icon.md} />
-            ) : (
-              <AlertCircle className={ds.sizing.icon.md} />
-            )}
-            <AlertTitle>{alertInfo.title}</AlertTitle>
-            <AlertDescription>{alertInfo.description}</AlertDescription>
-          </Alert>
-        )}
 
         <div className={ds.layouts.twoColumns}>
           <div className={ds.spacing.section.stack}>
