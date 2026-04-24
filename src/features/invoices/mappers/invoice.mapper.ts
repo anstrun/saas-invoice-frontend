@@ -51,6 +51,9 @@ export function mapToInvoiceDto(
     infoFactura,
     detalles,
     infoAdicional: nota.trim() ? { "Nota": nota.trim() } : undefined,
+    inventoryItems: products
+      .filter(p => p.productId)
+      .map(p => ({ productId: p.productId!, quantity: p.quantity })),
   };
 }
 function mapTipoIdentificacion(identificacion: string): "04" | "05" | "07" {
