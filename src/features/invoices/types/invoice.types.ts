@@ -12,6 +12,7 @@ export interface Product {
   name: string;
   quantity: number;
   price: number;
+  productId?: string;  // ← agregar
 }
 
 export type TaxDetail = {
@@ -57,6 +58,7 @@ export type FacturaRequest = {
   customerId: string;
   infoFactura: InvoiceInfo;
   detalles: Detail[];
+  inventoryItems?: { productId: string; quantity: number }[];  // ← agregar
 };
 
 export type FacturaResponse = {
